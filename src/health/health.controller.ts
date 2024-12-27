@@ -23,7 +23,7 @@ export class HealthController {
   check() {
     return this.health.check([
       () =>
-        // TODO: update port to use env var
+        // TODO: update port to use env var, domain
         this.http.pingCheck(
           'local-ping',
           `http://127.0.0.1:8000/v${DEFAULT_APP_VERSION}/health/ping`,
