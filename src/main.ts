@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { VersioningType } from '@nestjs/common';
 import { DEFAULT_APP_VERSION } from 'src/app.constant';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,6 +26,15 @@ async function bootstrap() {
 
   // TODO: shutdown db connection
   app.enableShutdownHooks();
+
+  const config = new DocumentBuilder()
+    .setTitle('Starter example')
+    .setDescription('Starter API description')
+    .setVersion('1.0')
+    .addTag('Starter App')
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, documentFactory);
 
   await app.listen(process.env.PORT ?? 8000);
 }
