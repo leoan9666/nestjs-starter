@@ -15,10 +15,12 @@ export type AppConfig = {
   origin: string;
 };
 
-const appConfig: AppConfig = {
-  env: process.env.ENV as Env,
-  port: parseInt(process.env.PORT, 10),
-  origin: process.env.ORIGIN,
-};
-
-export default registerAs(APP_CONFIG_NAME, () => appConfig);
+export default registerAs(
+  APP_CONFIG_NAME,
+  () =>
+    ({
+      env: process.env.ENV || 'local',
+      port: parseInt(process.env.PORT, 10) || 8000,
+      origin: process.env.ORIGIN,
+    }) as AppConfig,
+);

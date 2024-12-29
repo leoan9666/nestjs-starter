@@ -1,10 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { VersioningType } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 
 import helmet from 'helmet';
-import { VersioningType } from '@nestjs/common';
-import { DEFAULT_APP_VERSION } from 'src/app.constant';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+import { DEFAULT_APP_VERSION } from '@src/app.constant';
+import { APP_CONFIG_NAME, AppConfig } from '@src/config/env/app/app.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -36,7 +39,10 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
 
-  await app.listen(process.env.PORT ?? 8000);
+  const configService = app.get(ConfigService);
+  const port = configService.get<AppConfig>(APP_CONFIG_NAME).port;
+
+  await app.listen(port ?? 8000);
 }
 bootstrap();
 
