@@ -1,5 +1,6 @@
 import { ALLOWED_ENVIRONMENT_VARIABLES } from '@src/config/env/allowed-env-vars';
 import { AppSchema } from '@src/config/env/app/app.validation';
+
 import { z } from 'zod';
 
 export default (environmentVariables: Record<string, any>) => {

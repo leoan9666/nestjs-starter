@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
-
 import { ConfigService } from '@nestjs/config';
+
 import { AppService } from '@src/app.service';
 import { APP_CONFIG_NAME, AppConfig } from '@src/config/env/app/app.config';
 
