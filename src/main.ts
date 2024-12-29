@@ -3,21 +3,25 @@ import { VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 
-import { AppModule } from './app.module';
-
-import helmet from 'helmet';
-
+import { AppModule } from '@src/app.module';
 import { DEFAULT_APP_VERSION } from '@src/app.constant';
 import { APP_CONFIG_NAME, AppConfig } from '@src/config/env/app/app.config';
+
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  const configService = app.get(ConfigService);
+  const port = configService.get<AppConfig>(APP_CONFIG_NAME)!.port;
+  const origin = configService
+    .get<AppConfig>(APP_CONFIG_NAME)!
+    .origin.split(',');
+
   app.use(helmet());
 
   app.enableCors({
-    // TODO: use environment variable values for origin
-    origin: ['localhost:3001'], // e.g. ['https://frontend.com', 'https://another-frontend.com']
+    origin, // e.g. ['https://frontend.com', 'https://another-frontend.com']
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -39,9 +43,6 @@ async function bootstrap() {
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
-
-  const configService = app.get(ConfigService);
-  const port = configService.get<AppConfig>(APP_CONFIG_NAME).port;
 
   await app.listen(port ?? 8000);
 }

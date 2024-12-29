@@ -1,17 +1,15 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post, UsePipes } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ZodValidationPipe } from '@src/app.pipe';
 
 import { AppService } from '@src/app.service';
 import { APP_CONFIG_NAME, AppConfig } from '@src/config/env/app/app.config';
-import { AlsContext } from '@src/als/als.type';
-
-import { AsyncLocalStorage } from 'async_hooks';
+import { AppSchema, CreateAppDto } from '@src/app.schema';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly configService: ConfigService,
-    private readonly als: AsyncLocalStorage<AlsContext>,
     private readonly appService: AppService,
   ) {}
 
@@ -21,11 +19,12 @@ export class AppController {
     console.log('appConfig:');
     console.log(appConfig);
 
-    const userId = this.als.getStore().userID;
-    const correlationID = this.als.getStore().correlationID;
-    console.log(`userId: ${userId}`);
-    console.log(`correlationID: ${correlationID}`);
-
     return this.appService.getHello();
+  }
+
+  @Post()
+  @UsePipes(new ZodValidationPipe(AppSchema))
+  postHello(@Body() appDto: CreateAppDto) {
+    console.log(appDto);
   }
 }

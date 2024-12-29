@@ -1,3 +1,4 @@
+import { APP_FILTER } from '@nestjs/core';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
@@ -10,6 +11,8 @@ import { AppService } from '@src/app.service';
 import { AlsModule } from '@src/als/als.module';
 import { AlsContext } from '@src/als/als.type';
 import { CorrelationIDMiddleware } from '@src/middleware/correlationID.middleware';
+import { CatchAllFilter } from '@src/filter/catch-all.filter';
+import { CustomErrorFilter } from '@src/filter/custom-error.filter';
 
 import { AsyncLocalStorage } from 'async_hooks';
 
@@ -26,7 +29,17 @@ import { AsyncLocalStorage } from 'async_hooks';
     AlsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: CatchAllFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: CustomErrorFilter,
+    },
+    AppService,
+  ],
 })
 export class AppModule implements NestModule {
   constructor(private readonly als: AsyncLocalStorage<AlsContext>) {}

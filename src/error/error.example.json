@@ -1,0 +1,24 @@
+[
+  {
+    "Zod valudation error": {
+      "message": "The provided data is invalid.",
+      "errorCode": 1001,
+      "status": 400,
+      "errors": [
+        {
+          "code": "invalid_type",
+          "expected": "string",
+          "received": "number",
+          "path": ["name"],
+          "message": "Expected string, received number"
+        },
+        {
+          "validation": "email",
+          "code": "invalid_string",
+          "message": "Invalid email address",
+          "path": ["email"]
+        }
+      ]
+    }
+  }
+]

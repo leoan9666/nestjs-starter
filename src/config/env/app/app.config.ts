@@ -20,7 +20,7 @@ export default registerAs(
   () =>
     ({
       env: process.env.ENV || 'local',
-      port: parseInt(process.env.PORT, 10) || 8000,
+      port: parseInt(process.env.PORT!, 10) || 8000,
       origin: process.env.ORIGIN,
     }) as AppConfig,
 );
