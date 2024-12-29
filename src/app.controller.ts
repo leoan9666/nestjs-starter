@@ -1,11 +1,22 @@
 import { Body, Controller, Get, Post, UsePipes } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ZodValidationPipe } from '@src/app.pipe';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiHeader,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+import { ZodValidationPipe } from '@src/app.pipe';
 import { AppService } from '@src/app.service';
 import { APP_CONFIG_NAME, AppConfig } from '@src/config/env/app/app.config';
-import { AppSchema, CreateAppDto } from '@src/app.schema';
+import { AppSchema, CreateApp } from '@src/app.schema';
+import { CreateAppDto } from '@src/app.dto';
 
+@ApiBearerAuth()
+@ApiTags('app')
 @Controller()
 export class AppController {
   constructor(
@@ -14,7 +25,27 @@ export class AppController {
   ) {}
 
   @Get()
-  getHello(): string {
+  @ApiOperation({
+    summary: 'Returns a hello message',
+    description:
+      'This endpoint returns a simple hello message from the server. It requires the user ID to be passed in the header.',
+  })
+  @ApiHeader({
+    name: 'x-user-id',
+    description: 'User ID derived from token',
+    example: 'abc',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Hello message successfully retrieved.',
+    type: String,
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'Bad Request. The request is malformed or missing required parameters.',
+  })
+  public getHello(): string {
     const appConfig = this.configService.get<AppConfig>(APP_CONFIG_NAME);
     console.log('appConfig:');
     console.log(appConfig);
@@ -23,8 +54,19 @@ export class AppController {
   }
 
   @Post()
+  @ApiResponse({
+    status: 201,
+    description: 'Post Hello successfully sent.',
+    type: undefined,
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'Bad Request. The request is malformed or missing required parameters.',
+  })
+  @ApiBody({ type: CreateAppDto })
   @UsePipes(new ZodValidationPipe(AppSchema))
-  postHello(@Body() appDto: CreateAppDto) {
+  public postHello(@Body() appDto: CreateApp): void {
     console.log(appDto);
   }
 }

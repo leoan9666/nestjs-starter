@@ -7,4 +7,4 @@ export const AppSchema = z
   })
   .strict();
 
-export type CreateAppDto = z.infer<typeof AppSchema>;
+export type CreateApp = z.infer<typeof AppSchema>;
