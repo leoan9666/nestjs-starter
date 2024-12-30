@@ -53,7 +53,22 @@ export class CustomErrorFilter implements ExceptionFilter {
       path,
     };
 
-    await this.logService.error('Error', JSON.stringify(exception));
+    let exceptionDetails: string;
+
+    // Check if exception is null, undefined, or an empty object
+    if (
+      !exception ||
+      (typeof exception === 'object' && Object.keys(exception).length === 0)
+    ) {
+      exceptionDetails = JSON.stringify({
+        message: 'Exception is empty or undefined',
+        value: exception, // Will capture `null` or `undefined`
+      });
+    } else {
+      exceptionDetails = JSON.stringify(exception);
+    }
+
+    await this.logService.error('Error', JSON.stringify(exceptionDetails));
 
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
   }
