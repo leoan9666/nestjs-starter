@@ -6,11 +6,12 @@ import { ConfigService } from '@nestjs/config';
 import { AppModule } from '@src/app.module';
 import { DEFAULT_APP_VERSION } from '@src/app.constant';
 import { APP_CONFIG_NAME, AppConfig } from '@src/config/env/app/app.config';
+import { LogService } from '@src/log/log.service';
 
 import helmet from 'helmet';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
 
   const configService = app.get(ConfigService);
   const port = configService.get<AppConfig>(APP_CONFIG_NAME)!.port;
@@ -43,6 +44,8 @@ async function bootstrap() {
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
+
+  app.useLogger(app.get(LogService));
 
   await app.listen(port ?? 8000);
 }

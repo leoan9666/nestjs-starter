@@ -13,6 +13,9 @@ import { AlsContext } from '@src/als/als.type';
 import { CorrelationIDMiddleware } from '@src/middleware/correlationID.middleware';
 import { CatchAllFilter } from '@src/filter/catch-all.filter';
 import { CustomErrorFilter } from '@src/filter/custom-error.filter';
+import { LogModule } from '@src/log/log.module';
+import awsConfig from '@src/config/env/aws/aws.config';
+import cloudwatchLogConfig from '@src/config/env/cloudwatch-log/cloudwatch-log.config';
 
 import { AsyncLocalStorage } from 'async_hooks';
 
@@ -21,12 +24,13 @@ import { AsyncLocalStorage } from 'async_hooks';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [appConfig],
+      load: [appConfig, awsConfig, cloudwatchLogConfig],
       validate: validateEnv,
     }),
     HealthModule,
     AppShutdownHandlerModule,
     AlsModule,
+    LogModule,
   ],
   controllers: [AppController],
   providers: [

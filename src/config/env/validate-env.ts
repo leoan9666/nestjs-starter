@@ -1,5 +1,7 @@
 import { ALLOWED_ENVIRONMENT_VARIABLES } from '@src/config/env/allowed-env-vars';
 import { AppSchema } from '@src/config/env/app/app.validation';
+import { AwsSchema } from '@src/config/env/aws/aws.validation';
+import { CloudwatchLogSchema } from '@src/config/env/cloudwatch-log/cloudwatch-log.validation';
 
 import { z } from 'zod';
 
@@ -10,9 +12,7 @@ export default (environmentVariables: Record<string, any>) => {
     ),
   );
 
-  // TODO: add other config schemas
-  // const CombinedSchema = AppSchema.merge(DatabaseSchema);
-  const CombinedSchema = AppSchema;
+  const CombinedSchema = AppSchema.merge(AwsSchema).merge(CloudwatchLogSchema);
 
   type CombinedConfig = z.infer<typeof CombinedSchema>;
 

@@ -14,6 +14,7 @@ import { AppService } from '@src/app.service';
 import { APP_CONFIG_NAME, AppConfig } from '@src/config/env/app/app.config';
 import { AppSchema, CreateApp } from '@src/app.schema';
 import { CreateAppDto } from '@src/app.dto';
+import { LogService } from '@src/log/log.service';
 
 @ApiBearerAuth()
 @ApiTags('app')
@@ -22,6 +23,7 @@ export class AppController {
   constructor(
     private readonly configService: ConfigService,
     private readonly appService: AppService,
+    private readonly logService: LogService,
   ) {}
 
   @Get()
@@ -49,6 +51,14 @@ export class AppController {
     const appConfig = this.configService.get<AppConfig>(APP_CONFIG_NAME);
     console.log('appConfig:');
     console.log(appConfig);
+
+    try {
+      throw new Error('test log error');
+    } catch (error) {
+      this.logService.error(error, error.stack, {
+        description: 'test error log thrown',
+      });
+    }
 
     return this.appService.getHello();
   }
