@@ -8,6 +8,7 @@ import {
 import { HttpAdapterHost } from '@nestjs/core';
 
 import { AlsContext } from '@src/als/als.type';
+import { LogService } from '@src/log/log.service';
 
 import { AsyncLocalStorage } from 'async_hooks';
 
@@ -16,9 +17,10 @@ export class CatchAllFilter implements ExceptionFilter {
   constructor(
     private readonly als: AsyncLocalStorage<AlsContext>,
     private readonly httpAdapterHost: HttpAdapterHost,
+    private readonly logService: LogService,
   ) {}
 
-  catch(exception: unknown, host: ArgumentsHost): void {
+  async catch(exception: unknown, host: ArgumentsHost): Promise<void> {
     // In certain situations `httpAdapter` might not be available in the constructor method, thus we should resolve it here.
     const { httpAdapter } = this.httpAdapterHost;
 
@@ -39,7 +41,7 @@ export class CatchAllFilter implements ExceptionFilter {
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
     };
 
-    // TODO: log error to winston
+    await this.logService.error('Error', JSON.stringify(exception));
 
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
   }

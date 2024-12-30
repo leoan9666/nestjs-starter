@@ -89,7 +89,6 @@ export class CloudWatchTransport extends WinstonTransport {
     metadata?: any,
     trace?: any,
   ): Promise<void> {
-    console.log(metadata);
     const data =
       typeof metadata === 'string'
         ? { message, metadata }
@@ -119,7 +118,6 @@ export class CloudWatchTransport extends WinstonTransport {
   log(info: winston.Logform.TransformableInfo, callback: () => void): void {
     this.ensureLogGroup()
       .then(() => this.ensureLogStream())
-      .then(() => console.log(info))
       .then(() =>
         this.writeToCloudWatch(
           info.message as string,

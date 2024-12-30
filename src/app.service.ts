@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { AlsContext } from '@src/als/als.type';
 import { AlsSchema } from '@src/als/als.schema';
+import { ZodCustomError } from '@src/exception/zod.error';
+import { ERROR_CONSTANTS } from '@src/error/error.constants';
 
 import { AsyncLocalStorage } from 'async_hooks';
 
@@ -14,8 +16,12 @@ export class AppService {
 
     if (!result.success) {
       console.error('Invalid ALS Context:', result.error.errors);
-      // TODO: throw custom zod error
-      throw new Error('Zod validation error');
+      throw new ZodCustomError({
+        errorCode: ERROR_CONSTANTS.ZOD.ZOD_VALIDATION_ERROR.code,
+        message: ERROR_CONSTANTS.ZOD.ZOD_VALIDATION_ERROR.message,
+        status: ERROR_CONSTANTS.ZOD.ZOD_VALIDATION_ERROR.httpStatus,
+        errors: result.error.errors,
+      });
     }
 
     const userId = result.data.userID;

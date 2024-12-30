@@ -62,7 +62,7 @@ export class LogService implements LoggerService {
     return env === 'local' || env === null || env === undefined;
   }
 
-  log(message: string, metadata: any = {}) {
+  async log(message: string, metadata: any = {}) {
     const result = AlsSchema.safeParse(this.als.getStore());
 
     const userID = result?.data?.userID;
@@ -76,7 +76,7 @@ export class LogService implements LoggerService {
     this.logger.info(message, { metadata: data });
   }
 
-  error(message: string, trace: string, metadata: any = {}) {
+  async error(message: string, trace: any, metadata: any = {}) {
     const result = AlsSchema.safeParse(this.als.getStore());
 
     const userID = result?.data?.userID;
@@ -87,10 +87,10 @@ export class LogService implements LoggerService {
         ? { metadata, correlationID, userID, level: 'error' }
         : { ...metadata, correlationID, userID, level: 'error' };
 
-    this.logger.error(`${message}`, { metadata: data, trace });
+    this.logger.error(`${message}`, { metadata: data, trace: trace });
   }
 
-  warn(message: string, metadata: any = {}) {
+  async warn(message: string, metadata: any = {}) {
     const result = AlsSchema.safeParse(this.als.getStore());
 
     const userID = result?.data?.userID;
@@ -104,7 +104,7 @@ export class LogService implements LoggerService {
     this.logger.warn(message, { metadata: data });
   }
 
-  debug(message: string, metadata: any = {}) {
+  async debug(message: string, metadata: any = {}) {
     const result = AlsSchema.safeParse(this.als.getStore());
 
     const userID = result?.data?.userID;
@@ -118,7 +118,7 @@ export class LogService implements LoggerService {
     this.logger.debug(message, { metadata: data });
   }
 
-  verbose(message: string, metadata: any = {}) {
+  async verbose(message: string, metadata: any = {}) {
     const result = AlsSchema.safeParse(this.als.getStore());
 
     const userID = result?.data?.userID;

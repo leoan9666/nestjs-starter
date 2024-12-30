@@ -47,7 +47,7 @@ export class AppController {
     description:
       'Bad Request. The request is malformed or missing required parameters.',
   })
-  public getHello(): string {
+  public async getHello(): Promise<string> {
     const appConfig = this.configService.get<AppConfig>(APP_CONFIG_NAME);
     console.log('appConfig:');
     console.log(appConfig);
@@ -55,7 +55,7 @@ export class AppController {
     try {
       throw new Error('test log error');
     } catch (error) {
-      this.logService.error(error, error.stack, {
+      await this.logService.error(error, error.stack, {
         description: 'test error log thrown',
       });
     }
