@@ -16,6 +16,8 @@ import { CustomErrorFilter } from '@src/filter/custom-error.filter';
 import { LogModule } from '@src/log/log.module';
 import awsConfig from '@src/config/env/aws/aws.config';
 import cloudwatchLogConfig from '@src/config/env/cloudwatch-log/cloudwatch-log.config';
+import { CacheModule } from '@src/cache/cache.module';
+import upstashConfig from '@src/config/env/upstash/upstash.config';
 
 import { AsyncLocalStorage } from 'async_hooks';
 
@@ -24,13 +26,14 @@ import { AsyncLocalStorage } from 'async_hooks';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [appConfig, awsConfig, cloudwatchLogConfig],
+      load: [appConfig, awsConfig, cloudwatchLogConfig, upstashConfig],
       validate: validateEnv,
     }),
     HealthModule,
     AppShutdownHandlerModule,
     AlsModule,
     LogModule,
+    CacheModule,
   ],
   controllers: [AppController],
   providers: [
