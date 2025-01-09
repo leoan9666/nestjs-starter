@@ -44,7 +44,13 @@ export class CatchAllFilter implements ExceptionFilter {
     let exceptionDetails: string;
 
     // Check if exception is null, undefined, or an empty object
-    if (
+    if (exception instanceof Error) {
+      exceptionDetails = JSON.stringify({
+        errorName: exception.name,
+        message: exception.message,
+        stack: exception.stack,
+      });
+    } else if (
       !exception ||
       (typeof exception === 'object' && Object.keys(exception).length === 0)
     ) {

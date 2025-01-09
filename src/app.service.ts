@@ -5,17 +5,19 @@ import { AlsSchema } from '@src/als/als.schema';
 import { ZodCustomError } from '@src/exception/zod.error';
 import { ERROR_CONSTANTS } from '@src/error/error.constants';
 import { CacheService } from '@src/cache/cache.service';
-import { ELASTICACHE, UPSTASH } from '@src/cache/cache.type';
+import { TCacheService } from '@src/cache/cache.type';
 
 import { AsyncLocalStorage } from 'async_hooks';
 
 @Injectable()
 export class AppService {
+  private readonly cache: TCacheService;
+
   constructor(
     private readonly als: AsyncLocalStorage<AlsContext>,
     private readonly cacheService: CacheService,
   ) {
-    this.cacheService.setProvider(UPSTASH);
+    this.cache = this.cacheService.createCacheService();
   }
 
   async getHello(): Promise<string> {
@@ -36,17 +38,9 @@ export class AppService {
     console.log(`userId: ${userId}`);
     console.log(`correlationID: ${correlationID}`);
 
-    await this.cacheService.set('key', 'value', 20);
-    const cachedRes = await this.cacheService.get('key');
-    console.log(cachedRes);
+    await this.cache.set('key', 'value', 20);
+    const cachedRes = await this.cache.get('key');
 
-    this.cacheService.setProvider(ELASTICACHE);
-    this.cacheService.setProvider(UPSTASH);
-
-    await this.cacheService.set('key', 'value', 20);
-    const cachedRes2 = await this.cacheService.get('key');
-    console.log(cachedRes2);
-
-    return 'Hello World!';
+    return `Hello World! ${cachedRes}`;
   }
 }

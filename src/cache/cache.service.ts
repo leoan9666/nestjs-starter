@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 import {
   CacheProvider,
@@ -8,46 +9,31 @@ import {
 } from '@src/cache/cache.type';
 import { ElastiCacheRedisService } from '@src/cache/providers/elasticache.cache';
 import { UpstashCacheService } from '@src/cache/providers/upstash.cache';
+import {
+  CACHE_CONFIG_NAME,
+  CacheConfig,
+} from '@src/config/env/cache/cache.config';
 
 @Injectable()
 export class CacheService {
-  private cacheService: TCacheService;
-
   constructor(
+    private readonly configService: ConfigService,
     private readonly upstashCacheService: UpstashCacheService,
     private readonly elastiCacheRedisService: ElastiCacheRedisService,
-  ) {
-    this.cacheService = this.upstashCacheService; // Default to upstash
-  }
+  ) {}
 
-  setProvider(provider: CacheProvider) {
-    // Dynamically switch cache provider
-    if (provider === UPSTASH) {
-      this.cacheService = this.upstashCacheService;
-    } else if (provider === ELASTICACHE) {
-      this.cacheService = this.elastiCacheRedisService;
-    } else {
-      throw new Error('Unsupported cache provider');
+  createCacheService(provider?: CacheProvider): TCacheService {
+    provider = provider
+      ? provider
+      : this.configService.get<CacheConfig>(CACHE_CONFIG_NAME)!.provider;
+
+    switch (provider) {
+      case UPSTASH:
+        return this.upstashCacheService;
+      case ELASTICACHE:
+        return this.elastiCacheRedisService;
+      default:
+        throw new Error(`Unsupported cache provider: ${provider}`);
     }
-  }
-
-  async set(key: string, value: string, ttl?: number): Promise<void> {
-    await this.cacheService.set(key, value, ttl);
-  }
-
-  async get(key: string): Promise<string | null> {
-    return await this.cacheService.get(key);
-  }
-
-  async del(key: string): Promise<void> {
-    await this.cacheService.del(key);
-  }
-
-  async exists(key: string): Promise<boolean> {
-    return await this.cacheService.exists(key);
-  }
-
-  async flush(): Promise<void> {
-    await this.cacheService.flush();
   }
 }

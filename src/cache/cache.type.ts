@@ -9,4 +9,6 @@ export type TCacheService = {
 export const UPSTASH = 'upstash';
 export const ELASTICACHE = 'elasticache';
 
-export type CacheProvider = typeof UPSTASH | typeof ELASTICACHE;
+export const cacheProviders = [UPSTASH, ELASTICACHE] as const;
+
+export type CacheProvider = (typeof cacheProviders)[number];
