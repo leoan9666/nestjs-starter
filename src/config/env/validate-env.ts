@@ -3,6 +3,7 @@ import { AppSchema } from '@src/config/env/app/app.validation';
 import { AwsSchema } from '@src/config/env/aws/aws.validation';
 import { CacheSchema } from '@src/config/env/cache/cache.validation';
 import { CloudwatchLogSchema } from '@src/config/env/cloudwatch-log/cloudwatch-log.validation';
+import { SessionSchema } from '@src/config/env/session/session.validation';
 import { UpstashSchema } from '@src/config/env/upstash/upstash.validation';
 
 import { z } from 'zod';
@@ -17,7 +18,8 @@ export default (environmentVariables: Record<string, any>) => {
   const CombinedSchema = AppSchema.merge(AwsSchema)
     .merge(CloudwatchLogSchema)
     .merge(CacheSchema)
-    .merge(UpstashSchema);
+    .merge(UpstashSchema)
+    .merge(SessionSchema);
 
   type CombinedConfig = z.infer<typeof CombinedSchema>;
 

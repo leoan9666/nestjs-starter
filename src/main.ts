@@ -7,8 +7,13 @@ import { AppModule } from '@src/app.module';
 import { DEFAULT_APP_VERSION } from '@src/app.constant';
 import { APP_CONFIG_NAME, AppConfig } from '@src/config/env/app/app.config';
 import { LogService } from '@src/log/log.service';
+import {
+  SESSION_CONFIG_NAME,
+  SessionConfig,
+} from '@src/config/env/session/session.config';
 
 import helmet from 'helmet';
+import * as session from 'express-session';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -35,6 +40,22 @@ async function bootstrap() {
 
   // TODO: shutdown db connection
   app.enableShutdownHooks();
+
+  // Set up session management
+  const sessionConfig = configService.get<SessionConfig>(SESSION_CONFIG_NAME);
+  console.log(sessionConfig);
+  app.use(
+    session({
+      secret: sessionConfig!.secret, // secret key for signing session ID cookie
+      resave: sessionConfig!.resave, // don't save session if unmodified
+      saveUninitialized: sessionConfig!.saveUnitialized, // don't create session until something is stored
+      cookie: {
+        httpOnly: sessionConfig!.cookieHttpOnly,
+        secure: sessionConfig!.cookieSecure,
+        maxAge: sessionConfig!.cookieMaxAge,
+      }, // configure cookies
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('Starter example')

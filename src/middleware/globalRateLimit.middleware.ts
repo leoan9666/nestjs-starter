@@ -40,7 +40,7 @@ export class RateLimitingMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
     // Retrieve userID (for example, from a JWT or user authentication)
-    const userID = req['user']?.id || req.headers['x-user-id']; // Modify as per your authentication mechanism
+    const userID = req['user']?.['id'] || req.headers['x-user-id']; // Modify as per your authentication mechanism
     const key = userID ? `${req.ip}:${userID}` : req.ip;
 
     const path = req.path;

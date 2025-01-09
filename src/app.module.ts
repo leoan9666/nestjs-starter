@@ -20,6 +20,7 @@ import { CacheModule } from '@src/cache/cache.module';
 import upstashConfig from '@src/config/env/upstash/upstash.config';
 import cacheConfig from '@src/config/env/cache/cache.config';
 import { RateLimitingMiddleware } from '@src/middleware/globalRateLimit.middleware';
+import sessionConfig from '@src/config/env/session/session.config';
 
 import { AsyncLocalStorage } from 'async_hooks';
 
@@ -34,6 +35,7 @@ import { AsyncLocalStorage } from 'async_hooks';
         cloudwatchLogConfig,
         cacheConfig,
         upstashConfig,
+        sessionConfig,
       ],
       validate: validateEnv,
     }),
