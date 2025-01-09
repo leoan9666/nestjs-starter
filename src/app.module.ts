@@ -19,6 +19,7 @@ import cloudwatchLogConfig from '@src/config/env/cloudwatch-log/cloudwatch-log.c
 import { CacheModule } from '@src/cache/cache.module';
 import upstashConfig from '@src/config/env/upstash/upstash.config';
 import cacheConfig from '@src/config/env/cache/cache.config';
+import { RateLimitingMiddleware } from '@src/middleware/globalRateLimit.middleware';
 
 import { AsyncLocalStorage } from 'async_hooks';
 
@@ -59,6 +60,7 @@ export class AppModule implements NestModule {
   constructor(private readonly als: AsyncLocalStorage<AlsContext>) {}
 
   configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RateLimitingMiddleware).forRoutes('*');
     consumer.apply(CorrelationIDMiddleware).forRoutes('*');
   }
 }
