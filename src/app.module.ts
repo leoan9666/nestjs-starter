@@ -23,8 +23,10 @@ import cacheConfig from '@src/config/env/cache/cache.config';
 import { RateLimitingMiddleware } from '@src/middleware/globalRateLimit.middleware';
 import sessionConfig from '@src/config/env/session/session.config';
 import { AuthModule } from '@src/auth/auth.module';
+import databaseConfig from '@src/config/env/database/database.config';
 
 import { AsyncLocalStorage } from 'async_hooks';
+import { DatabaseModule } from './db/database/database.module';
 
 @Module({
   imports: [
@@ -38,6 +40,7 @@ import { AsyncLocalStorage } from 'async_hooks';
         cacheConfig,
         upstashConfig,
         sessionConfig,
+        databaseConfig,
       ],
       validate: validateEnv,
     }),
@@ -48,6 +51,7 @@ import { AsyncLocalStorage } from 'async_hooks';
     CacheModule,
     AuthModule,
     PassportModule,
+    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [

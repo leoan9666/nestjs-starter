@@ -24,7 +24,6 @@ import { Auth } from '@src/auth/guard/auth.guard';
 @Controller()
 export class AppController {
   constructor(
-    private readonly configService: ConfigService,
     private readonly appService: AppService,
     private readonly logService: LogService,
   ) {}
@@ -51,12 +50,8 @@ export class AppController {
       'Bad Request. The request is malformed or missing required parameters.',
   })
   public async getHello(): Promise<string> {
-    const appConfig = this.configService.get<AppConfig>(APP_CONFIG_NAME);
-    console.log('appConfig:');
-    console.log(appConfig);
-
     try {
-      throw new Error('test log error');
+      // throw new Error('test log error');
     } catch (error) {
       await this.logService.error(error, error.stack, {
         description: 'test error log thrown',

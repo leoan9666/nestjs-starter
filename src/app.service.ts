@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { AlsContext } from '@src/als/als.type';
 import { AlsSchema } from '@src/als/als.schema';
@@ -6,8 +6,11 @@ import { ZodCustomError } from '@src/exception/zod.error';
 import { ERROR_CONSTANTS } from '@src/error/error.constants';
 import { CacheService } from '@src/cache/cache.service';
 import { TCacheService } from '@src/cache/cache.type';
+import { DATABASE } from '@src/db/database.provider';
+import { DB } from '@src/db/db';
 
 import { AsyncLocalStorage } from 'async_hooks';
+import { Kysely } from 'kysely';
 
 @Injectable()
 export class AppService {
@@ -16,11 +19,18 @@ export class AppService {
   constructor(
     private readonly als: AsyncLocalStorage<AlsContext>,
     private readonly cacheService: CacheService,
+    @Inject(DATABASE) private readonly db: Kysely<DB>,
   ) {
     this.cache = this.cacheService.createCacheService();
   }
 
   async getHello(): Promise<string> {
+    const rows = await this.db
+      .selectFrom('account')
+      .selectAll()
+      .executeTakeFirstOrThrow();
+    console.log(rows);
+
     const result = AlsSchema.safeParse(this.als.getStore());
 
     if (!result.success) {
