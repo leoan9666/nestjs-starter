@@ -33,7 +33,7 @@ export class CatchAllFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const responseBody = {
+    let responseBody = {
       correlationID,
       statusCode: httpStatus,
       timestamp: new Date().toISOString(),
@@ -43,20 +43,33 @@ export class CatchAllFilter implements ExceptionFilter {
 
     let exceptionDetails: string;
 
-    // Check if exception is null, undefined, or an empty object
-    if (exception instanceof Error) {
+    if (exception instanceof HttpException) {
+      responseBody = { ...responseBody, message: exception.message };
       exceptionDetails = JSON.stringify({
         errorName: exception.name,
         message: exception.message,
         stack: exception.stack,
+        path: ctx.getRequest().path,
+        method: ctx.getRequest().method,
+      });
+    } else if (exception instanceof Error) {
+      exceptionDetails = JSON.stringify({
+        errorName: exception.name,
+        message: exception.message,
+        stack: exception.stack,
+        path: ctx.getRequest().path,
+        method: ctx.getRequest().method,
       });
     } else if (
       !exception ||
       (typeof exception === 'object' && Object.keys(exception).length === 0)
     ) {
+      // Check if exception is null, undefined, or an empty object
       exceptionDetails = JSON.stringify({
         message: 'Exception is empty or undefined',
-        value: exception, // Will capture `null` or `undefined`
+        value: exception, // Will capture `null` or `undefined`,
+        path: ctx.getRequest().path,
+        method: ctx.getRequest().method,
       });
     } else {
       exceptionDetails = JSON.stringify(exception);

@@ -11,9 +11,15 @@ import {
   SESSION_CONFIG_NAME,
   SessionConfig,
 } from '@src/config/env/session/session.config';
+import {
+  UPSTASH_CONFIG_NAME,
+  UpstashConfig,
+} from '@src/config/env/upstash/upstash.config';
 
 import helmet from 'helmet';
 import * as session from 'express-session';
+import { RedisStore } from 'connect-redis';
+import * as Redis from 'ioredis';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -43,9 +49,13 @@ async function bootstrap() {
 
   // Set up session management
   const sessionConfig = configService.get<SessionConfig>(SESSION_CONFIG_NAME);
-  console.log(sessionConfig);
   app.use(
     session({
+      store: new RedisStore({
+        client: new Redis.Redis(
+          configService.get<UpstashConfig>(UPSTASH_CONFIG_NAME)!.connectionUri,
+        ),
+      }),
       secret: sessionConfig!.secret, // secret key for signing session ID cookie
       resave: sessionConfig!.resave, // don't save session if unmodified
       saveUninitialized: sessionConfig!.saveUnitialized, // don't create session until something is stored

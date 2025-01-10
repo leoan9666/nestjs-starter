@@ -1,0 +1,18 @@
+meta {
+  name: post app
+  type: http
+  seq: 2
+}
+
+post {
+  url: 127.0.0.1:8001/v1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "john doe",
+    "email": "test@gmail.com"
+  }
+}

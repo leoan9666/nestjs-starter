@@ -1,6 +1,7 @@
 import { APP_FILTER } from '@nestjs/core';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { PassportModule } from '@nestjs/passport';
 
 import { AppShutdownHandlerModule } from '@src/app-shutdown-handler/app-shutdown-handler.module';
 import appConfig from '@src/config/env/app/app.config';
@@ -21,6 +22,7 @@ import upstashConfig from '@src/config/env/upstash/upstash.config';
 import cacheConfig from '@src/config/env/cache/cache.config';
 import { RateLimitingMiddleware } from '@src/middleware/globalRateLimit.middleware';
 import sessionConfig from '@src/config/env/session/session.config';
+import { AuthModule } from '@src/auth/auth.module';
 
 import { AsyncLocalStorage } from 'async_hooks';
 
@@ -44,6 +46,8 @@ import { AsyncLocalStorage } from 'async_hooks';
     AlsModule,
     LogModule,
     CacheModule,
+    AuthModule,
+    PassportModule,
   ],
   controllers: [AppController],
   providers: [
