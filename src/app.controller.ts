@@ -15,9 +15,12 @@ import { APP_CONFIG_NAME, AppConfig } from '@src/config/env/app/app.config';
 import { AppSchema, CreateApp } from '@src/app.schema';
 import { CreateAppDto } from '@src/app.dto';
 import { LogService } from '@src/log/log.service';
+import { Role } from '@src/auth/role/role.enum';
+import { Auth } from '@src/auth/guard/auth.guard';
 
 @ApiBearerAuth()
 @ApiTags('app')
+@Auth(Role.Admin)
 @Controller()
 export class AppController {
   constructor(
