@@ -1,10 +1,19 @@
-import { Module } from '@nestjs/common';
-import { OnApplicationShutdown } from '@nestjs/common';
+import { Inject, Module, OnApplicationShutdown } from '@nestjs/common';
 
-@Module({})
+import { DATABASE_CLIENT } from '@src/db/database.provider';
+import { DatabaseModule } from '@src/db/database/database.module';
+import { DB } from '@src/db/db';
+
+import { Kysely } from 'kysely';
+
+@Module({
+  imports: [DatabaseModule],
+})
 export class AppShutdownHandlerModule implements OnApplicationShutdown {
-  onApplicationShutdown(signal: string) {
+  constructor(@Inject(DATABASE_CLIENT) private readonly db: Kysely<DB>) {}
+
+  async onApplicationShutdown(signal: string) {
     console.log(signal); // e.g. "SIGINT"
-    // TODO: shut down db
+    await this.db.destroy();
   }
 }
