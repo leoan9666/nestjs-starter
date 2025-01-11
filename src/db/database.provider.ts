@@ -5,10 +5,10 @@ import {
   DATABASE_CONFIG_NAME,
   DatabaseConfig,
 } from '@src/config/env/database/database.config';
+import { DB } from '@src/db/db';
 
 import { Kysely, PostgresDialect } from 'kysely';
 import { Pool } from 'pg';
-import { DB } from '@src/db/db';
 
 @Injectable()
 export class DatabaseProvider {
