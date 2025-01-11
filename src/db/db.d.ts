@@ -31,6 +31,20 @@ export interface Account {
   username: string;
 }
 
+export interface AccountRole {
+  account_id: Int8;
+  role_id: Int8;
+}
+
+export interface Role {
+  created_at: Generated<Timestamp>;
+  id: Generated<Int8>;
+  name: string;
+  updated_at: Generated<Timestamp>;
+}
+
 export interface DB {
   account: Account;
+  account_role: AccountRole;
+  role: Role;
 }

@@ -7,9 +7,10 @@ import { AuthService } from '@src/auth/auth.service';
 import { SessionAuthGuard } from '@src/auth/guard/session-auth.guard';
 import { LocalStrategy } from '@src/auth/passportjs/passport-local.strategy';
 import { CacheModule } from '@src/cache/cache.module';
+import { DatabaseModule } from '@src/db/database/database.module';
 
 @Module({
-  imports: [PassportModule, CacheModule],
+  imports: [PassportModule, CacheModule, DatabaseModule],
   providers: [
     {
       provide: APP_GUARD,

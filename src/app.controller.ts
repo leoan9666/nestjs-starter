@@ -20,7 +20,6 @@ import { Auth } from '@src/auth/guard/auth.guard';
 
 @ApiBearerAuth()
 @ApiTags('app')
-@Auth(Role.Admin)
 @Controller()
 export class AppController {
   constructor(
@@ -28,6 +27,7 @@ export class AppController {
     private readonly logService: LogService,
   ) {}
 
+  @Auth(Role.Admin, Role.User)
   @Get()
   @ApiOperation({
     summary: 'Returns a hello message',
@@ -61,6 +61,7 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @Auth(Role.Admin)
   @Post()
   @ApiResponse({
     status: 201,

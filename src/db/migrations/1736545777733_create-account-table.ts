@@ -1,6 +1,6 @@
 import { Kysely, sql } from 'kysely';
 
-const tableName = 'account';
+export const ACCOUNT_TABLE = 'account';
 
 const STATUS = 'status';
 const STATUSES = {
@@ -16,7 +16,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute();
 
   await db.schema
-    .createTable(tableName)
+    .createTable(ACCOUNT_TABLE)
     .addColumn('id', 'bigserial', (col) => col.primaryKey())
     .addColumn('first_name', 'varchar(250)', (col) => col.notNull())
     .addColumn('last_name', 'varchar(250)', (col) => col.notNull())
@@ -42,6 +42,6 @@ export async function up(db: Kysely<any>): Promise<void> {
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-  await db.schema.dropTable(tableName).execute();
+  await db.schema.dropTable(ACCOUNT_TABLE).execute();
   await db.schema.dropType(STATUS).execute();
 }

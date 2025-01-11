@@ -34,16 +34,20 @@ export class AuthController {
     req.session.visits = req.session.visits ? req.session.visits + 1 : 1;
 
     const sessionID = uuidv7();
-    const userID = req.user.sub;
-
-    req.session.user = { sessionID };
-    await this.cache.set(`sessionID:${sessionID}`, userID);
+    const userID = `userID:${req.user.sub}`;
 
     const data = {
       sessionID,
       roles: req.user.roles,
     };
-    await this.cache.set(`userID:${userID}`, JSON.stringify(data));
+    req.session.user = data;
+
+    const previousSessionID = await this.cache.get(userID);
+    if (previousSessionID) {
+      await this.cache.del(previousSessionID);
+    }
+    await this.cache.set(`sessionID:${sessionID}`, userID);
+    await this.cache.set(userID, `sessionID:${sessionID}`);
 
     return { message: 'Login successful', user: req.user };
   }
@@ -54,7 +58,10 @@ export class AuthController {
     const sessionIDKey = `sessionID:${req.session.user.sessionID}`;
     const userID = await this.cache.get(sessionIDKey);
     await this.cache.del(sessionIDKey);
-    await this.cache.del(`userID:${userID}`);
+
+    if (userID) {
+      await this.cache.del(userID);
+    }
     req.session.destroy();
   }
 }

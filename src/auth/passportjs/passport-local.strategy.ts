@@ -8,14 +8,14 @@ import { Strategy } from 'passport-local';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
-    super({ usernameField: 'email' });
+    super({ usernameField: 'username' });
   }
 
-  async validate(email: string, password: string): Promise<any> {
-    const user = await this.authService.validateUser(email, password);
-    if (!user) {
+  async validate(username: string, password: string): Promise<any> {
+    const account = await this.authService.validateAccount(username, password);
+    if (!account) {
       throw new UnauthorizedException();
     }
-    return user;
+    return account;
   }
 }
