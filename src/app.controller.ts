@@ -19,7 +19,7 @@ import { Role } from '@src/auth/role/role.enum';
 import { Auth } from '@src/auth/guard/auth.guard';
 
 @ApiBearerAuth()
-@ApiTags('app')
+@ApiTags('App')
 @Controller()
 export class AppController {
   constructor(
@@ -49,7 +49,7 @@ export class AppController {
     description:
       'Bad Request. The request is malformed or missing required parameters.',
   })
-  public async getHello(): Promise<string> {
+  async getHello(): Promise<string> {
     try {
       // throw new Error('test log error');
     } catch (error) {
@@ -75,7 +75,7 @@ export class AppController {
   })
   @ApiBody({ type: CreateAppDto })
   @UsePipes(new ZodValidationPipe(AppSchema))
-  public postHello(@Body() appDto: CreateApp): void {
+  postHello(@Body() appDto: CreateApp): void {
     console.log(appDto);
   }
 }

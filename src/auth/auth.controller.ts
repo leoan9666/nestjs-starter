@@ -19,10 +19,7 @@ import { v7 as uuidv7 } from 'uuid';
 export class AuthController {
   private readonly cache: TCacheService;
 
-  constructor(
-    private readonly authService: AuthService,
-    private readonly cacheService: CacheService,
-  ) {
+  constructor(private readonly cacheService: CacheService) {
     this.cache = this.cacheService.createCacheService();
   }
 
@@ -38,6 +35,7 @@ export class AuthController {
 
     const data = {
       sessionID,
+      userID: req.user.sub,
       roles: req.user.roles,
     };
     req.session.user = data;

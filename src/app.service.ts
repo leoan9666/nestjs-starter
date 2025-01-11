@@ -35,12 +35,7 @@ export class AppService {
 
     if (!result.success) {
       console.error('Invalid ALS Context:', result.error.errors);
-      throw new ZodCustomError({
-        errorCode: ERROR_CONSTANTS.ZOD.ZOD_VALIDATION_ERROR.code,
-        message: ERROR_CONSTANTS.ZOD.ZOD_VALIDATION_ERROR.message,
-        status: ERROR_CONSTANTS.ZOD.ZOD_VALIDATION_ERROR.httpStatus,
-        errors: result.error.errors,
-      });
+      throw new ZodCustomError({ errors: result.error.errors });
     }
 
     const userId = result.data.userID;

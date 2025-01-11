@@ -15,12 +15,7 @@ export class ZodValidationPipe implements PipeTransform {
       return value;
     } catch (error) {
       if (error instanceof ZodError) {
-        throw new ZodCustomError({
-          message: ERROR_CONSTANTS.ZOD.ZOD_VALIDATION_ERROR.message,
-          errorCode: ERROR_CONSTANTS.ZOD.ZOD_VALIDATION_ERROR.code,
-          status: ERROR_CONSTANTS.ZOD.ZOD_VALIDATION_ERROR.httpStatus,
-          errors: error.errors,
-        });
+        throw new ZodCustomError({ errors: error.errors });
       }
       throw error;
     }

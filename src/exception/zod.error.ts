@@ -1,17 +1,19 @@
 import { HttpStatus } from '@nestjs/common';
 
-import { ErrorCodes } from '@src/error/error.constants';
+import { ERROR_CONSTANTS } from '@src/error/error.constants';
 import { CustomError } from '@src/exception/custom.error';
 
 type ErrorDetails = {
-  errorCode: ErrorCodes;
-  message: string;
-  status: HttpStatus;
   errors: any;
 };
 
 export class ZodCustomError extends CustomError {
-  constructor({ errorCode, message, status, errors }: ErrorDetails) {
-    super(errorCode, message, status, errors);
+  constructor({ errors }: ErrorDetails) {
+    super(
+      ERROR_CONSTANTS.ZOD.ZOD_VALIDATION_ERROR.code,
+      ERROR_CONSTANTS.ZOD.ZOD_VALIDATION_ERROR.message,
+      ERROR_CONSTANTS.ZOD.ZOD_VALIDATION_ERROR.httpStatus,
+      errors,
+    );
   }
 }
