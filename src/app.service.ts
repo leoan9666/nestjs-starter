@@ -6,7 +6,7 @@ import { ZodCustomError } from '@src/exception/zod.error';
 import { ERROR_CONSTANTS } from '@src/error/error.constants';
 import { CacheService } from '@src/cache/cache.service';
 import { TCacheService } from '@src/cache/cache.type';
-import { DATABASE } from '@src/db/database.provider';
+import { DATABASE_CLIENT } from '@src/db/database.provider';
 import { DB } from '@src/db/db';
 
 import { AsyncLocalStorage } from 'async_hooks';
@@ -19,7 +19,7 @@ export class AppService {
   constructor(
     private readonly als: AsyncLocalStorage<AlsContext>,
     private readonly cacheService: CacheService,
-    @Inject(DATABASE) private readonly db: Kysely<DB>,
+    @Inject(DATABASE_CLIENT) private readonly db: Kysely<DB>,
   ) {
     this.cache = this.cacheService.createCacheService();
   }

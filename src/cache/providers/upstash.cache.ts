@@ -1,23 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { TCacheService } from '@src/cache/cache.type';
-import {
-  UPSTASH_CONFIG_NAME,
-  UpstashConfig,
-} from '@src/config/env/upstash/upstash.config';
+import { REDIS_CLIENT } from '@src/cache/providers/redis.provider';
 
 import * as Redis from 'ioredis';
 
 @Injectable()
 export class UpstashCacheService implements TCacheService {
-  private readonly redis: Redis.Redis;
-
-  constructor(private readonly configService: ConfigService) {
-    this.redis = new Redis.Redis(
-      this.configService.get<UpstashConfig>(UPSTASH_CONFIG_NAME)!.connectionUri,
-    );
-  }
+  constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis.Redis) {}
 
   async set(key: string, value: string, ttl: number = 3600): Promise<void> {
     await this.redis.setex(key, ttl, value);

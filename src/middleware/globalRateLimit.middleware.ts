@@ -1,11 +1,7 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 
 import { DEFAULT_APP_VERSION } from '@src/app.constant';
-import {
-  UPSTASH_CONFIG_NAME,
-  UpstashConfig,
-} from '@src/config/env/upstash/upstash.config';
+import { REDIS_CLIENT } from '@src/cache/providers/redis.provider';
 
 import { Request, Response, NextFunction } from 'express';
 import { RateLimiterRedis } from 'rate-limiter-flexible';
@@ -16,13 +12,9 @@ export class RateLimitingMiddleware implements NestMiddleware {
   private defaultRateLimiter: RateLimiterRedis;
   private customRateLimiters: Record<string, RateLimiterRedis> = {};
 
-  constructor(private readonly configService: ConfigService) {
-    const redis = new Redis.Redis(
-      this.configService.get<UpstashConfig>(UPSTASH_CONFIG_NAME)!.connectionUri,
-    );
-
+  constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis.Redis) {
     this.defaultRateLimiter = new RateLimiterRedis({
-      storeClient: redis,
+      storeClient: this.redis,
       points: 10, // number of requests
       duration: 10, // per 1 seconds
       keyPrefix: 'global', // prefix to differentiate global rate limits in Redis
@@ -31,7 +23,7 @@ export class RateLimitingMiddleware implements NestMiddleware {
     // Add custom rate limit for specific endpoints
     this.customRateLimiters[`[POST] /v${DEFAULT_APP_VERSION}/`] =
       new RateLimiterRedis({
-        storeClient: redis,
+        storeClient: this.redis,
         points: 10, // 10 requests
         duration: 20, // per 20 seconds
         keyPrefix: 'custom', // prefix to differentiate custom rate limits in Redis

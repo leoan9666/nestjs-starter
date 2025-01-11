@@ -28,10 +28,10 @@ export class DatabaseProvider {
   }
 }
 
-export const DATABASE = 'DATABASE';
+export const DATABASE_CLIENT = 'DATABASE_CLIENT';
 
 export const databaseProvider = {
-  provide: DATABASE,
+  provide: DATABASE_CLIENT,
   useFactory: async (databaseProvider: DatabaseProvider) => {
     return databaseProvider.getKyselyClient();
   },

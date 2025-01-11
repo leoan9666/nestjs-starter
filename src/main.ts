@@ -20,6 +20,7 @@ import helmet from 'helmet';
 import * as session from 'express-session';
 import { RedisStore } from 'connect-redis';
 import * as Redis from 'ioredis';
+import { REDIS_CLIENT } from '@src/cache/providers/redis.provider';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -49,12 +50,11 @@ async function bootstrap() {
 
   // Set up session management
   const sessionConfig = configService.get<SessionConfig>(SESSION_CONFIG_NAME);
+  const redisProvider = app.get(REDIS_CLIENT);
   app.use(
     session({
       store: new RedisStore({
-        client: new Redis.Redis(
-          configService.get<UpstashConfig>(UPSTASH_CONFIG_NAME)!.connectionUri,
-        ),
+        client: redisProvider,
       }),
       secret: sessionConfig!.secret, // secret key for signing session ID cookie
       resave: sessionConfig!.resave, // don't save session if unmodified
