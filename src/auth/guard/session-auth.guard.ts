@@ -23,6 +23,6 @@ export class SessionAuthGuard implements CanActivate {
     }
 
     // Check if session exists
-    return !!request.session.user;
+    return !!request.session.account;
   }
 }

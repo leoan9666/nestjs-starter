@@ -13,8 +13,6 @@ import { PublicRoute } from '@src/auth/set-public.metadata';
 import { CacheService } from '@src/cache/cache.service';
 import { TCacheService } from '@src/cache/cache.type';
 
-import { v7 as uuidv7 } from 'uuid';
-
 @Controller('auth')
 export class AuthController {
   private readonly cache: TCacheService;
@@ -30,36 +28,27 @@ export class AuthController {
     // Session token will be handled by passport session strategy
     req.session.visits = req.session.visits ? req.session.visits + 1 : 1;
 
-    const sessionID = uuidv7();
-    const userID = `userID:${req.user.sub}`;
+    if (
+      req.session?.account &&
+      req.session.account.accountID !== req.user.sub
+    ) {
+      await this.cache.del(`accountID:${req.session.account.accountID}`);
+    }
 
-    const data = {
-      sessionID,
-      userID: req.user.sub,
+    req.session.account = {
+      accountID: parseInt(req.user.sub, 10),
       roles: req.user.roles,
     };
-    req.session.user = data;
 
-    const previousSessionID = await this.cache.get(userID);
-    if (previousSessionID) {
-      await this.cache.del(previousSessionID);
-    }
-    await this.cache.set(`sessionID:${sessionID}`, userID);
-    await this.cache.set(userID, `sessionID:${sessionID}`);
+    await this.cache.set(`accountID:${req.user.sub}`, `sess:${req.session.id}`);
 
-    return { message: 'Login successful', user: req.user };
+    return { message: 'Login successful', account: req.user };
   }
 
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   async logout(@Req() req) {
-    const sessionIDKey = `sessionID:${req.session.user.sessionID}`;
-    const userID = await this.cache.get(sessionIDKey);
-    await this.cache.del(sessionIDKey);
-
-    if (userID) {
-      await this.cache.del(userID);
-    }
+    await this.cache.del(`accountID:${req.session.account.accountID}`);
     req.session.destroy();
   }
 }
