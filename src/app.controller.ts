@@ -11,7 +11,6 @@ import {
 
 import { ZodValidationPipe } from '@src/app.pipe';
 import { AppService } from '@src/app.service';
-import { APP_CONFIG_NAME, AppConfig } from '@src/config/env/app/app.config';
 import { AppSchema, CreateApp } from '@src/app.schema';
 import { CreateAppDto } from '@src/app.dto';
 import { LogService } from '@src/log/log.service';

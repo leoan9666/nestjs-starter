@@ -8,7 +8,7 @@ import { SessionAuthGuard } from '@src/auth/guard/session-auth.guard';
 import { LocalStrategy } from '@src/auth/passportjs/passport-local.strategy';
 import { CacheModule } from '@src/cache/cache.module';
 import { DatabaseModule } from '@src/db/database/database.module';
-import { RegisterModule } from './register-account/register.module';
+import { RegisterModule } from '@src/auth/register-account/register.module';
 
 @Module({
   imports: [PassportModule, CacheModule, DatabaseModule, RegisterModule],

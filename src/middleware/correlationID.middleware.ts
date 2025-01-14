@@ -12,8 +12,9 @@ export class CorrelationIDMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
     const store = {
-      userID: req.headers['x-user-id'] as string,
+      accountID: `${req.session['account']['accountID']}` as string,
       correlationID: uuidv7(),
+      account: req.session['account'],
     };
 
     this.als.run(store, () => next());

@@ -7,7 +7,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { AuthService } from '@src/auth/auth.service';
 import { LocalAuthGuard } from '@src/auth/guard/local-auth.guard';
 import { PublicRoute } from '@src/auth/set-public.metadata';
 import { CacheService } from '@src/cache/cache.service';

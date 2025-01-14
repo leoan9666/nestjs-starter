@@ -4,7 +4,6 @@ export const CLOUDWATCHLOG_CONFIG_NAME = 'cloudwatch-log';
 export type CloudwatchLogConfig = {
   groupName: string;
   streamName: string;
-  region: string;
 };
 
 export default registerAs(
@@ -13,6 +12,5 @@ export default registerAs(
     ({
       groupName: process.env.LOG_GROUP_NAME,
       streamName: process.env.LOG_STREAM_NAME,
-      region: process.env.AWS_REGION,
     }) as CloudwatchLogConfig,
 );

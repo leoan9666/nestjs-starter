@@ -24,9 +24,11 @@ import { RateLimitingMiddleware } from '@src/middleware/globalRateLimit.middlewa
 import sessionConfig from '@src/config/env/session/session.config';
 import { AuthModule } from '@src/auth/auth.module';
 import databaseConfig from '@src/config/env/database/database.config';
+import { DatabaseModule } from '@src/db/database/database.module';
+import { AppConfigModule } from '@src/appConfig/appConfig.module';
 
 import { AsyncLocalStorage } from 'async_hooks';
-import { DatabaseModule } from './db/database/database.module';
+import awsAppConfigConfig from '@src/config/env/awsAppConfig/awsAppConfig.config';
 
 @Module({
   imports: [
@@ -41,6 +43,7 @@ import { DatabaseModule } from './db/database/database.module';
         upstashConfig,
         sessionConfig,
         databaseConfig,
+        awsAppConfigConfig,
       ],
       validate: validateEnv,
     }),
@@ -52,6 +55,7 @@ import { DatabaseModule } from './db/database/database.module';
     AuthModule,
     PassportModule,
     DatabaseModule,
+    AppConfigModule,
   ],
   controllers: [AppController],
   providers: [

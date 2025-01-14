@@ -1,6 +1,7 @@
 import { ALLOWED_ENVIRONMENT_VARIABLES } from '@src/config/env/allowed-env-vars';
 import { AppSchema } from '@src/config/env/app/app.validation';
 import { AwsSchema } from '@src/config/env/aws/aws.validation';
+import { AwsAppConfigSchema } from '@src/config/env/awsAppConfig/awsAppConfig.validation';
 import { CacheSchema } from '@src/config/env/cache/cache.validation';
 import { CloudwatchLogSchema } from '@src/config/env/cloudwatch-log/cloudwatch-log.validation';
 import { DatabaseSchema } from '@src/config/env/database/database.validation';
@@ -21,7 +22,8 @@ export default (environmentVariables: Record<string, any>) => {
     .merge(CacheSchema)
     .merge(UpstashSchema)
     .merge(SessionSchema)
-    .merge(DatabaseSchema);
+    .merge(DatabaseSchema)
+    .merge(AwsAppConfigSchema);
 
   type CombinedConfig = z.infer<typeof CombinedSchema>;
 

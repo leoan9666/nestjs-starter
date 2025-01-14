@@ -33,10 +33,8 @@ export class RolesGuard implements CanActivate {
     }
 
     const { session } = context.switchToHttp().getRequest();
-    const userID = await this.cache.get(`sessionID:${session.user.sessionID}`);
-    const userData = (await this.cache.get(`userID:${userID}`)) || '';
-    const parseUserData = JSON.parse(userData);
-    const roles = parseUserData.roles;
+    const accountData = session.account || '';
+    const roles = accountData.roles;
 
     if (!requiredRoles.some((role) => roles?.includes(role))) {
       throw new UnauthorizedException(

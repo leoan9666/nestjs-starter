@@ -9,6 +9,7 @@ import {
 } from '@src/config/env/cloudwatch-log/cloudwatch-log.config';
 import { CloudWatchTransport } from '@src/log/transports/cloudwatch-transport';
 import { AlsSchema } from '@src/als/als.schema';
+import { AWS_CONFIG_NAME, AwsConfig } from '@src/config/env/aws/aws.config';
 
 import * as winston from 'winston';
 import { AsyncLocalStorage } from 'async_hooks';
@@ -29,6 +30,7 @@ export class LogService implements LoggerService {
     const cloudwatchLogConfig = this.configService.get<CloudwatchLogConfig>(
       CLOUDWATCHLOG_CONFIG_NAME,
     );
+    const awsConfig = this.configService.get<AwsConfig>(AWS_CONFIG_NAME);
 
     // Local mode: log to console
     if (this.isLocalEnv()) {
@@ -46,7 +48,7 @@ export class LogService implements LoggerService {
         new CloudWatchTransport({
           logGroupName: cloudwatchLogConfig!.groupName,
           logStreamName: cloudwatchLogConfig!.streamName,
-          awsRegion: cloudwatchLogConfig!.region,
+          awsRegion: awsConfig!.region,
         }),
       );
     }
@@ -65,7 +67,7 @@ export class LogService implements LoggerService {
   async log(message: string, metadata: any = {}) {
     const result = AlsSchema.safeParse(this.als.getStore());
 
-    const userID = result?.data?.userID;
+    const userID = result?.data?.accountID;
     const correlationID = result?.data?.correlationID;
 
     const data =
@@ -79,7 +81,7 @@ export class LogService implements LoggerService {
   async error(message: string, trace: any, metadata: any = {}) {
     const result = AlsSchema.safeParse(this.als.getStore());
 
-    const userID = result?.data?.userID;
+    const userID = result?.data?.accountID;
     const correlationID = result?.data?.correlationID;
 
     const data =
@@ -93,7 +95,7 @@ export class LogService implements LoggerService {
   async warn(message: string, metadata: any = {}) {
     const result = AlsSchema.safeParse(this.als.getStore());
 
-    const userID = result?.data?.userID;
+    const userID = result?.data?.accountID;
     const correlationID = result?.data?.correlationID;
 
     const data =
@@ -107,7 +109,7 @@ export class LogService implements LoggerService {
   async debug(message: string, metadata: any = {}) {
     const result = AlsSchema.safeParse(this.als.getStore());
 
-    const userID = result?.data?.userID;
+    const userID = result?.data?.accountID;
     const correlationID = result?.data?.correlationID;
 
     const data =
@@ -121,7 +123,7 @@ export class LogService implements LoggerService {
   async verbose(message: string, metadata: any = {}) {
     const result = AlsSchema.safeParse(this.als.getStore());
 
-    const userID = result?.data?.userID;
+    const userID = result?.data?.accountID;
     const correlationID = result?.data?.correlationID;
 
     const data =
